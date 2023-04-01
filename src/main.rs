@@ -1,4 +1,7 @@
-#[derive(Debug)]
+use std::io::{self, Write};
+use std::str::FromStr;
+use std::time::{Duration, Instant};
+
 struct Oscillator {
     amp: f32,
     freq: f32,
@@ -36,32 +39,45 @@ impl Oscillator {
 }
 
 fn main() {
-    let osc1 = Oscillator::new(0.5, 440.0);
-    let osc2 = Oscillator::with_input(0.25, 240.0, osc1);
+    let osc1_amp = read_param::<f32>("Enter amplitude for oscillator 1: ");
+    let osc1_freq = read_param::<f32>("Enter frequency for oscillator 1: ");
+    let osc1 = Oscillator::new(osc1_amp, osc1_freq);
 
-    // Use frequency_modulation() method to compute the output of osc2 at a given time
-    let time = 5.0; // example time value
-    let output = osc2.frequency_modulation(time);
-    println!("Output at time {}: {}", time, output);
+    let osc2_amp = read_param::<f32>("Enter amplitude for oscillator 2: ");
+    let osc2_freq = read_param::<f32>("Enter frequency for oscillator 2: ");
+    let osc2 = Oscillator::with_input(osc2_amp, osc2_freq, osc1);
+
+    let update_interval = Duration::from_millis(1);
+    let mut time = 0.0;
+
+    loop {
+        let start = Instant::now();
+        let output = osc2.frequency_modulation(time);
+        println!("Output at time {}: {}", time, output);
+
+        let elapsed = start.elapsed();
+        if elapsed < update_interval {
+            std::thread::sleep(update_interval - elapsed);
+        }
+
+        time += update_interval.as_secs_f32();
+    }
 }
 
-// #[derive(Debug)]
-// struct Oscillator {
-//     amp: f32,
-//     freq: f32,
-//     on_off: bool,
-//     input: Oscillator
-// }
+fn read_param<T: FromStr>(prompt: &str) -> T {
+    print!("{}", prompt);
+    io::stdout().flush().unwrap();
 
-// fn main() {
-//    let osc1 = Oscillator {
-//         amp: 0.5,
-//         freq: 440.0,
-//    };
+    loop {
+        let mut input = String::new();
+        io::stdin().read_line(&mut input).unwrap();
 
-//    let osc2 = Oscillator {
-//         amp: 0.25,  
-//         freq: 240.0,
-//    };
-
-// }
+        match input.trim().parse::<T>() {
+            Ok(value) => return value,
+            Err(_) => {
+                print!("Invalid input. Please try again: ");
+                io::stdout().flush().unwrap();
+            }
+        }
+    }
+}
