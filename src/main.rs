@@ -1,11 +1,13 @@
+use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use std::io::{self, Write};
 use std::str::FromStr;
 use std::time::{Duration, Instant};
 
+#[derive(Clone)]
 struct Oscillator {
     amp: f32,
     freq: f32,
-    on_off: bool,
+    // on_off: bool,
     input: Option<Box<Oscillator>>,
 }
 
@@ -14,7 +16,7 @@ impl Oscillator {
         Oscillator {
             amp,
             freq,
-            on_off: false,
+            // on_off: false,
             input: None,
         }
     }
@@ -23,7 +25,7 @@ impl Oscillator {
         Oscillator {
             amp,
             freq,
-            on_off: false,
+            // on_off: false,
             input: Some(Box::new(input)),
         }
     }
@@ -49,6 +51,40 @@ fn main() {
 
     let update_interval = Duration::from_millis(1);
     let mut time = 0.0;
+
+    let host = cpal::default_host();
+    let device = host
+        .default_output_device()
+        .expect("Failed to find default output device.");
+    let config = device
+        .default_output_config()
+        .expect("Failed to get default output config")
+        .config();
+
+    let osc2_clone = osc2.clone();
+    let sample_rate = config.sample_rate.0 as f32;
+    let mut samples_played = 0f32;
+
+    let err_fn = |err| eprintln!("An error occurred on the output audio stream: {}", err);
+
+    let stream = device
+        .build_output_stream(
+            &config,
+            move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
+                for sample in data.iter_mut() {
+                    let time = samples_played / sample_rate;
+                    *sample = osc2_clone.frequency_modulation(time);
+                    samples_played += 1.0;
+                }
+            },
+            err_fn,
+        )
+        .expect("Failed to build output stream.");
+
+    stream.play().expect("Failed to start audio stream.");
+
+    println!("Press Enter to stop the audio.");
+    let _ = std::io::stdin().read_line(&mut String::new());
 
     loop {
         let start = Instant::now();
