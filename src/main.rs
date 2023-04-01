@@ -1,8 +1,12 @@
+// cpal is a cross-platform audio library for Rust.
+
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use std::io::{self, Write};
 use std::str::FromStr;
 use std::time::{Duration, Instant};
+use std::env;
 
+// An oscillator struct that can be used to generate a sine wave.
 #[derive(Clone)]
 struct Oscillator {
     amp: f32,
@@ -11,6 +15,7 @@ struct Oscillator {
     input: Option<Box<Oscillator>>,
 }
 
+// Implement the oscillator struct.
 impl Oscillator {
     fn new(amp: f32, freq: f32) -> Oscillator {
         Oscillator {
@@ -21,6 +26,7 @@ impl Oscillator {
         }
     }
 
+    // a function that takes an oscillator as an input and returns a new oscillator.
     fn with_input(amp: f32, freq: f32, input: Oscillator) -> Oscillator {
         Oscillator {
             amp,
@@ -30,6 +36,7 @@ impl Oscillator {
         }
     }
 
+    // a function for frequency modulation.
     fn frequency_modulation(&self, time: f32) -> f32 {
         let input_freq = match &self.input {
             Some(input_oscillator) => input_oscillator.frequency_modulation(time) * self.amp,
@@ -41,12 +48,25 @@ impl Oscillator {
 }
 
 fn main() {
-    let osc1_amp = read_param::<f32>("Enter amplitude for oscillator 1: ");
-    let osc1_freq = read_param::<f32>("Enter frequency for oscillator 1: ");
-    let osc1 = Oscillator::new(osc1_amp, osc1_freq);
+    let args: Vec<String> = env::args().collect();
 
-    let osc2_amp = read_param::<f32>("Enter amplitude for oscillator 2: ");
-    let osc2_freq = read_param::<f32>("Enter frequency for oscillator 2: ");
+    let (osc1_amp, osc1_freq, osc2_amp, osc2_freq) = if args.len() == 5 {
+        (
+            parse_arg::<f32>(&args[1], "oscillator 1 amplitude"),
+            parse_arg::<f32>(&args[2], "oscillator 1 frequency"),
+            parse_arg::<f32>(&args[3], "oscillator 2 amplitude"),
+            parse_arg::<f32>(&args[4], "oscillator 2 frequency"),
+        )
+    } else {
+        (
+            read_param::<f32>("Enter amplitude for oscillator 1: "),
+            read_param::<f32>("Enter frequency for oscillator 1: "),
+            read_param::<f32>("Enter amplitude for oscillator 2: "),
+            read_param::<f32>("Enter frequency for oscillator 2: "),
+        )
+    };
+
+    let osc1 = Oscillator::new(osc1_amp, osc1_freq);
     let osc2 = Oscillator::with_input(osc2_amp, osc2_freq, osc1);
 
     let update_interval = Duration::from_millis(1);
@@ -98,6 +118,13 @@ fn main() {
 
         time += update_interval.as_secs_f32();
     }
+}
+
+fn parse_arg<T: FromStr>(arg: &str, description: &str) -> T {
+    arg.parse::<T>().unwrap_or_else(|_| {
+        eprintln!("Invalid {}: {}", description, arg);
+        std::process::exit(1);
+    })
 }
 
 fn read_param<T: FromStr>(prompt: &str) -> T {
