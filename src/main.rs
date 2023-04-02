@@ -6,8 +6,6 @@ use std::str::FromStr;
 use std::time::{Duration, Instant};
 use std::env;
 
-use yew::prelude::*;
-
 // An oscillator struct that can be used to generate a sine wave.
 #[derive(Clone)]
 struct Oscillator {
