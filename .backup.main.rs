@@ -6,12 +6,19 @@ use std::str::FromStr;
 use std::time::{Duration, Instant};
 use std::env;
 
+
+enum osc_type: String {
+    sine,
+    square,
+    triangle,
+    sawtooth,
+}
 // An oscillator struct that can be used to generate a sine wave.
 #[derive(Clone)]
 struct Oscillator {
     amp: f32,
     freq: f32,
-    // on_off: bool,
+    osci_type: osc_type,// on_off: bool,
     input: Option<Box<Oscillator>>,
 }
 
@@ -21,6 +28,7 @@ impl Oscillator {
         Oscillator {
             amp,
             freq,
+            osci_type,
             // on_off: false,
             input: None,
         }
