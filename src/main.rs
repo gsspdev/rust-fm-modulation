@@ -6,6 +6,8 @@ use std::str::FromStr;
 use std::time::{Duration, Instant};
 use std::env;
 
+use yew::prelude::*;
+
 // An oscillator struct that can be used to generate a sine wave.
 #[derive(Clone)]
 struct Oscillator {
@@ -48,6 +50,7 @@ impl Oscillator {
 }
 
 fn main() {
+
     let args: Vec<String> = env::args().collect();
 
     let (osc1_amp, osc1_freq, osc2_amp, osc2_freq) = if args.len() == 5 {
