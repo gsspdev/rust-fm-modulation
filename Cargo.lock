@@ -1115,6 +1115,7 @@ dependencies = [
  "console_log",
  "cpal",
  "cranelift-wasm",
+ "downcast-rs",
  "instant",
  "parity-wasm",
  "serde-wasm-bindgen 0.5.0",
