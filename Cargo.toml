@@ -28,3 +28,4 @@ console_log = "1.0.0"
 yew-macro = "0.20.0"
 downcast-rs = "1.2.0"
 yew = { git = "https://github.com/yewstack/yew/", features = ["csr"] }
+axum = "0.6.12"
