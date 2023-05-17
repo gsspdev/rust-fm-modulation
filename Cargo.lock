@@ -3,6 +3,15 @@
 version = 3
 
 [[package]]
+name = "aho-corasick"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "67fc08ce920c31afb70f013dcce1bfc3a3195de6a228474e45e1f145b36f8d04"
+dependencies = [
+ "memchr",
+]
+
+[[package]]
 name = "alsa"
 version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -41,6 +50,7 @@ dependencies = [
  "clang-sys",
  "lazy_static",
  "lazycell",
+ "log",
  "peeking_take_while",
  "proc-macro2",
  "quote",
@@ -48,6 +58,7 @@ dependencies = [
  "rustc-hash",
  "shlex",
  "syn 1.0.109",
+ "which",
 ]
 
 [[package]]
@@ -205,10 +216,44 @@ dependencies = [
 ]
 
 [[package]]
+name = "either"
+version = "1.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7fcaabb2fef8c910e7f4c7ce9f67a1283a1715879a7c230ca9d6d1ae31f16d91"
+
+[[package]]
 name = "fm_mod_synth"
 version = "0.1.1"
 dependencies = [
+ "bindgen",
+ "bitflags",
+ "cexpr",
+ "cfg-if",
+ "clang-sys",
+ "core-foundation-sys",
+ "coreaudio-rs",
+ "coreaudio-sys",
  "cpal",
+ "glob",
+ "lazy_static",
+ "lazycell",
+ "libc",
+ "libloading",
+ "mach",
+ "memchr",
+ "minimal-lexical",
+ "nom",
+ "peeking_take_while",
+ "proc-macro2",
+ "quote",
+ "regex",
+ "regex-syntax",
+ "rustc-hash",
+ "shlex",
+ "syn 2.0.16",
+ "thiserror",
+ "thiserror-impl",
+ "unicode-ident",
 ]
 
 [[package]]
@@ -598,6 +643,8 @@ version = "1.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "af83e617f331cc6ae2da5443c602dfa5af81e517212d9d611a5b3ba1777b5370"
 dependencies = [
+ "aho-corasick",
+ "memchr",
  "regex-syntax",
 ]
 
@@ -789,6 +836,17 @@ checksum = "3bdd9ef4e984da1187bf8110c5cf5b845fbc87a23602cdf912386a76fcd3a7c2"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "which"
+version = "4.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2441c784c52b289a054b7201fc93253e288f094e2f4be9058343127c4226a269"
+dependencies = [
+ "either",
+ "libc",
+ "once_cell",
 ]
 
 [[package]]
