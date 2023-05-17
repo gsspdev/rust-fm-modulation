@@ -1,7 +1,6 @@
 [package]
 name = "fm_mod_synth"
 version = "0.1.0"
-authors = "gsspdev <dev@gssp.io>"
 edition = "2021"
 rust-version = "1.69.0"
 description = "A simple package for fm synthesis"
