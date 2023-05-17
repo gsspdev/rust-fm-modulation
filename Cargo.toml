@@ -6,6 +6,7 @@ edition = "2021"
 rust-version = "1.69.0"
 description = "A simple package for fm synthesis"
 readme = "README.md"
+license = "MIT"
 cpal = "0.13"
 
 
